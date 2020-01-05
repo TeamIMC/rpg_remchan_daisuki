@@ -1,5 +1,5 @@
 # IMC_RPG_ENGINE
-# Copyright (C) 2019, Wonjun Jung
+# Copyright (C) 2019, United IMC
 #
 
 import pygame
