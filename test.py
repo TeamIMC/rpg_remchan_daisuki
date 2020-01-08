@@ -10,11 +10,13 @@ screen.fill((0, 0, 0))
 pygame.display.set_caption('IMC RPG')
 clock = pygame.time.Clock()
 
-test = map("test")
+test = rpg_map("test_doyun")
+testchr = character("test")
 
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
-    screen.blit(test.get_surf(), (0, 0))
+    mapsurf = resize(testchr.get_surf(), 3)
+    screen.blit(mapsurf, (0, 0))
     pygame.display.update()
