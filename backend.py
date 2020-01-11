@@ -42,7 +42,7 @@ class rpg_map:
         self.texture = get_texture(pygame.image.load(os.path.join("maps", name, "texture.png")).convert_alpha())
         # TODO: BMP 파싱 도무지 못해먹겠으니 알아서 구현할것. 임시로 텍스트 파싱으로 가져다둠
         self.floor = json.load(open(os.path.join("maps", name, "floor")))
-        self.object = json.load(open(os.path.join("maps", name, "object")))
+        #self.object = json.load(open(os.path.join("maps", name, "object")))
         ### 맵 Surface 생성 ###
         # floor 파일에서 맵 사이즈 구해오기. 단, 맵은 직사각형이어야 함
         height = len(self.floor)
@@ -53,12 +53,12 @@ class rpg_map:
             for x in range(width):
                 # 색상코드 앞 2자리 받아서 바이트로 변환후 int로 재변환
                 floornumb = int.from_bytes(bytearray.fromhex(self.floor[y][x][:2]), sys.byteorder)
-                objectnumb = int.from_bytes(bytearray.fromhex(self.object[y][x][:2]), sys.byteorder)
+                #objectnumb = int.from_bytes(bytearray.fromhex(self.object[y][x][:2]), sys.byteorder)
                 self.mapsurf.blit(self.texture[floornumb], (x * 32, y * 32))
-                self.mapsurf.blit(self.texture[objectnumb], (x * 32, y * 32))
+                #self.mapsurf.blit(self.texture[objectnumb], (x * 32, y * 32))
 
         ### 맵 충돌 포인트 생성 ###
-        self.hitbox = tuple(map(lambda x:  map(lambda y:  int(y[2:4]), x), self.object))
+        #self.hitbox = tuple(map(lambda x:  map(lambda y:  int(y[2:4]), x), self.object))
 
     #def get_surf(self, )
 
