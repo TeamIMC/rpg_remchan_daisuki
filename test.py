@@ -18,6 +18,6 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
-    mapsurf = resize(testchr.get_surf(), 3)
+    mapsurf = resize(testchr.texture_test(), 3)
     screen.blit(mapsurf, (0, 0))
     pygame.display.flip()

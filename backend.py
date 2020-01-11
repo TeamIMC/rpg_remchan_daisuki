@@ -32,6 +32,14 @@ def get_texture(image, tile_size = (32, 32), texture_size = (512, 512)):
         rtnlist.append(image.subsurface(srcrect))
     return tuple(rtnlist)
 
+def merge_hitbox(hitboxes):
+    rtnlist = hitboxes[0]
+    for hitbox in hitboxes[1:]:
+        for y in range(len(rtnlist)):
+            for x in range(len(rtnlist[0])):
+                if hitbox[y][x]:
+                    rtnlist[y][x] = 1
+    return rtnlist
 #####################
 ###### Classes ######
 #####################
@@ -65,6 +73,61 @@ class rpg_map:
 class character:
     def __init__(self, name):
         self.texture = get_texture(pygame.image.load(os.path.join("characters", name + ".png")).convert_alpha(), texture_size = (96, 128))
+        self.loc = (0, 0)
+        self.direction = 0
+        self.foot = 1
+        self.is_moving = False
+    
+    def get_hitbox(self, size):
+        # 히트박스 사이즈에 맞는 빈 리스트 생성
+        # 출처: How to create empty list by length
+        # https://stackoverflow.com/questions/10712002/create-an-empty-list-in-python-with-certain-size
+        hitbox = [[0] * size[0]] * size[1]
+        hitbox[self.loc[1]][self.loc[0]] = 1
+        if is_moving:
+            if self.direction == 0:
+                hitbox[self.loc[1] + 1][self.loc[0]] = 1
+            elif self.direction == 1:
+                hitbox[self.loc[1]][self.loc[0] - 1] = 1
+            elif self.direction == 2:
+                hitbox[self.loc[1]][self.loc[0] + 1] = 1
+            elif self.direction == 3:
+                hitbox[self.loc[1] - 1][self.loc[0]] = 1
+        return hitbox
+
+
+    def add_move_queue(self, direction, hitbox, duration = 1, fps = 60, tile_size = 32):
+        # direction 0 = 아래 1 = 왼쪽 2 = 오른쪽 3 = 위쪽
+        if direction == 0:
+            if self.loc[1] == len(hitbox) - 1:
+                return 1
+            elif hitbox[self.loc[1] + 1][self.loc[0]]:
+                return 1
+        elif direction == 1:
+            if self.loc[0] == 0:
+                return 1
+            elif hitbox[self.loc[1]][self.loc[0] - 1]:
+                return 1
+        elif direction == 2:
+            if self.loc[0] == len(hitbox[0]) - 1:
+                return 1
+            elif hitbox[self.loc[1]][self.loc[0] + 1]:
+                return 1
+        elif direction == 3:
+            if self.loc[1] == 0:
+                return 1
+            elif hitbox[self.loc[1] - 1][self.loc[0]]:
+                return 1
+        self.direction = direction
+        self.speed = tile_size / (fps * duration)
+        self.count = fps * duration
+        # 발 바꾸기
+        self.foot = int(not self.foot)
+        self.is_moving = True
+        return 0
+
+    #def run_queue(self, surf, ):
+
     def texture_test(self):
         rtnsurf = pygame.Surface((96, 128), flags = pygame.SRCALPHA)
         for y in range(4):
