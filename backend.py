@@ -41,6 +41,7 @@ def merge_hitbox(hitboxes):
                 if hitbox[y][x]:
                     rtnlist[y][x] = 1
     return rtnlist
+
 #####################
 ###### Classes ######
 #####################
