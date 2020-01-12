@@ -5,6 +5,7 @@ import pygame
 import os
 import sys
 import json
+import copy
 
 # TODO: 예외 클래스 따로 생성해둘것
 
@@ -33,7 +34,7 @@ def get_texture(image, tile_size = (32, 32), texture_size = (512, 512)):
     return tuple(rtnlist)
 
 def merge_hitbox(hitboxes):
-    rtnlist = hitboxes[0]
+    rtnlist = copy.deepcopy(hitboxes[0])
     for hitbox in hitboxes[1:]:
         for y in range(len(rtnlist)):
             for x in range(len(rtnlist[0])):
@@ -66,25 +67,32 @@ class rpg_map:
                 self.mapsurf.blit(self.texture[objectnumb], (x * 32, y * 32))
 
         ### 맵 충돌 포인트 생성 ###
-        self.hitbox = tuple(map(lambda x:  map(lambda y:  int(y[2:4]), x), self.object))
+        self.hitbox = list(map(lambda x:  list(map(lambda x:  0, range(len(self.object[0])))), range(len(self.object))))
+        for y in range(len(self.object)):
+            for x in range(len(self.object[0])):
+                self.hitbox[y][x] = int.from_bytes(bytearray.fromhex(self.object[y][x][2:4]), sys.byteorder)
+
+    def get_hitbox(self):return self.hitbox
 
     #def get_surf(self, )
 
 class character:
     def __init__(self, name):
         self.texture = get_texture(pygame.image.load(os.path.join("characters", name + ".png")).convert_alpha(), texture_size = (96, 128))
-        self.loc = (0, 0)
+        self.loc = [0, 0]
+        self.pixel = [0, 0]
         self.direction = 0
         self.foot = 1
+        self.count = 0
         self.is_moving = False
     
     def get_hitbox(self, size):
         # 히트박스 사이즈에 맞는 빈 리스트 생성
         # 출처: How to create empty list by length
         # https://stackoverflow.com/questions/10712002/create-an-empty-list-in-python-with-certain-size
-        hitbox = [[0] * size[0]] * size[1]
-        hitbox[self.loc[1]][self.loc[0]] = 1
-        if is_moving:
+        hitbox = list(map(lambda x:  list(map(lambda x:  0, range(size[0]))), range(size[1])))
+        hitbox[self.loc[1]][self.loc[0]] = 2
+        if self.is_moving:
             if self.direction == 0:
                 hitbox[self.loc[1] + 1][self.loc[0]] = 1
             elif self.direction == 1:
@@ -98,7 +106,11 @@ class character:
 
     def add_move_queue(self, direction, hitbox, duration = 1, fps = 60, tile_size = 32):
         # direction 0 = 아래 1 = 왼쪽 2 = 오른쪽 3 = 위쪽
-        if direction == 0:
+        # 캐릭터가 움직이는지, 해당 위치에 뭐가 있지는 않은지 확인
+        self.direction = direction
+        if self.is_moving:
+            return 1
+        elif direction == 0:
             if self.loc[1] == len(hitbox) - 1:
                 return 1
             elif hitbox[self.loc[1] + 1][self.loc[0]]:
@@ -118,6 +130,7 @@ class character:
                 return 1
             elif hitbox[self.loc[1] - 1][self.loc[0]]:
                 return 1
+        #방향, 속도, 움직일 횟수, 발, 움직이는지 여부 바꾸기
         self.direction = direction
         self.speed = tile_size / (fps * duration)
         self.count = fps * duration
@@ -126,7 +139,38 @@ class character:
         self.is_moving = True
         return 0
 
-    #def run_queue(self, surf, ):
+    def run_queue(self, surfsize, tile_size = 32):
+        rtnsurf = pygame.Surface(surfsize, flags = pygame.SRCALPHA)
+        if self.is_moving:
+            if self.count == 0:
+                # 카운트가 0에 도달했을 경우, 내부적으로 처리되는 위치를 옮기고 픽셀 위치 역시
+                # 해당 위치로 이동시킨 뒤 is_moving을 False로 바꿈
+                self.is_moving = False
+                if self.direction == 0:
+                    self.loc[1] += 1
+                elif self.direction == 1:
+                    self.loc[0] -= 1
+                elif self.direction == 2:
+                    self.loc[0] += 1
+                elif self.direction == 3:
+                    self.loc[1] -= 1
+                self.pixel = list(map(lambda x:  x * tile_size, self.loc))
+                self.is_moving = False
+            else:
+                # direction에 따라 픽셀을 speed만큼 이동시킨 뒤 카운트 감소
+                if self.direction == 0:
+                    self.pixel[1] += self.speed
+                elif self.direction == 1:
+                    self.pixel[0] -= self.speed
+                elif self.direction == 2:
+                    self.pixel[0] += self.speed
+                elif self.direction == 3:
+                    self.pixel[1] -= self.speed
+                self.count -= 1
+            rtnsurf.blit(self.texture[self.direction * 3 + self.foot * 2], self.pixel)
+        else:
+            rtnsurf.blit(self.texture[self.direction * 3 + 1], self.pixel)
+        return rtnsurf
 
     def texture_test(self):
         rtnsurf = pygame.Surface((96, 128), flags = pygame.SRCALPHA)
