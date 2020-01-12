@@ -42,7 +42,7 @@ while True:
             testchr.add_move_queue(direction, hitbox, duration = duration, fps = fps)
 
     mapsurf = test.mapsurf.copy()
-    mapsurf.blit(testchr.run_queue(mapsurf.get_size()), (0, 0))
+    testchr.run_queue(mapsurf), (0, 0)
 
     mapsurf = resize(mapsurf, 3)
     screen.blit(mapsurf, (0, 0))

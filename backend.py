@@ -140,8 +140,7 @@ class character:
         self.is_moving = True
         return 0
 
-    def run_queue(self, surfsize, tile_size = 32):
-        rtnsurf = pygame.Surface(surfsize, flags = pygame.SRCALPHA)
+    def run_queue(self, surf, tile_size = 32):
         if self.is_moving:
             if self.count == 0:
                 # 카운트가 0에 도달했을 경우, 내부적으로 처리되는 위치를 옮기고 픽셀 위치 역시
@@ -168,10 +167,10 @@ class character:
                 elif self.direction == 3:
                     self.pixel[1] -= self.speed
                 self.count -= 1
-            rtnsurf.blit(self.texture[self.direction * 3 + self.foot * 2], self.pixel)
+            surf.blit(self.texture[self.direction * 3 + self.foot * 2], self.pixel)
         else:
-            rtnsurf.blit(self.texture[self.direction * 3 + 1], self.pixel)
-        return rtnsurf
+            surf.blit(self.texture[self.direction * 3 + 1], self.pixel)
+        return
 
     def texture_test(self):
         rtnsurf = pygame.Surface((96, 128), flags = pygame.SRCALPHA)
