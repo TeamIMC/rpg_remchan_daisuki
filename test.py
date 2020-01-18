@@ -29,7 +29,7 @@ while True:
             if event.key in (K_w, K_a, K_s, K_d):
                 keypress = True
                 key = event.key
-                direction = {K_w: 3, K_a: 1, K_s: 0, K_d: 2}[event.key]
+                direction = {K_w: (0, -1), K_a: (-1, 0), K_s: (0, 1), K_d: (1, 0)}[event.key]
             if event.mod & KMOD_SHIFT:
                 duration = 0.25
             else:
@@ -47,5 +47,4 @@ while True:
     mapsurf = resize(mapsurf, 3)
     screen.blit(mapsurf, (0, 0))
     pygame.display.flip()
-    print(clock.get_fps())
     clock.tick(fps)

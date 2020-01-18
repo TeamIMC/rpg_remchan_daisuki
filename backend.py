@@ -83,16 +83,33 @@ class character:
         self.loc = [0, 0]
         self.pixel = [0, 0]
         self.direction = 0
-        self.foot = 1
+        self.foot = 2
         self.count = 0
         self.is_moving = False
-    
+
+    def get_texture(self, direction, foot):
+        # direction 0 = 아래 1 = 왼쪽 2 = 오른쪽 3 = 위쪽
+        # foot 0 = 왼발 1 = 차렷 2 = 오른발
+        if direction == (0, 1):
+            direction = 0
+        elif direction == (-1, 0):
+            direction = 1
+        elif direction == (1, 0):
+            direction = 2
+        elif direction == (0, -1):
+            direction = 3
+        else:
+            direction = 0
+
+        return self.texture[direction * 3 + foot]
+
     def get_hitbox(self, size):
         # 히트박스 사이즈에 맞는 빈 리스트 생성
         # 출처: How to create empty list by length
         # https://stackoverflow.com/questions/10712002/create-an-empty-list-in-python-with-certain-size
         hitbox = list(map(lambda x:  list(map(lambda x:  0, range(size[0]))), range(size[1])))
         hitbox[self.loc[1]][self.loc[0]] = 2
+        '''
         if self.is_moving:
             if self.direction == 0:
                 hitbox[self.loc[1] + 1][self.loc[0]] = 1
@@ -102,41 +119,30 @@ class character:
                 hitbox[self.loc[1]][self.loc[0] + 1] = 1
             elif self.direction == 3:
                 hitbox[self.loc[1] - 1][self.loc[0]] = 1
+        '''
         return hitbox
 
 
     def add_move_queue(self, direction, hitbox, duration = 1, fps = 60, tile_size = 32):
         # direction 0 = 아래 1 = 왼쪽 2 = 오른쪽 3 = 위쪽
         # 캐릭터가 움직이는지, 해당 위치에 뭐가 있지는 않은지 확인
-        self.direction = direction
         if self.is_moving:
             return 1
-        elif direction == 0:
-            if self.loc[1] == len(hitbox) - 1:
-                return 1
-            elif hitbox[self.loc[1] + 1][self.loc[0]]:
-                return 1
-        elif direction == 1:
-            if self.loc[0] == 0:
-                return 1
-            elif hitbox[self.loc[1]][self.loc[0] - 1]:
-                return 1
-        elif direction == 2:
-            if self.loc[0] == len(hitbox[0]) - 1:
-                return 1
-            elif hitbox[self.loc[1]][self.loc[0] + 1]:
-                return 1
-        elif direction == 3:
-            if self.loc[1] == 0:
-                return 1
-            elif hitbox[self.loc[1] - 1][self.loc[0]]:
-                return 1
+        else:
+            temploc = [self.loc[0] + direction[0], self.loc[1] + direction[1]]
+            if temploc[0] > len(hitbox[0]) - 1 or temploc[1] > len(hitbox) - 1 or temploc[0] < 0 or temploc[1] < 0:
+                return 2
+            elif hitbox[temploc[1]][temploc[0]]:
+                return 3
         #방향, 속도, 움직일 횟수, 발, 움직이는지 여부 바꾸기
         self.direction = direction
         self.speed = tile_size / (fps * duration)
         self.count = fps * duration
         # 발 바꾸기
-        self.foot = int(not self.foot)
+        if self.foot == 0:
+            self.foot = 2
+        else:
+            self.foot = 0
         self.is_moving = True
         return 0
 
@@ -146,30 +152,18 @@ class character:
                 # 카운트가 0에 도달했을 경우, 내부적으로 처리되는 위치를 옮기고 픽셀 위치 역시
                 # 해당 위치로 이동시킨 뒤 is_moving을 False로 바꿈
                 self.is_moving = False
-                if self.direction == 0:
-                    self.loc[1] += 1
-                elif self.direction == 1:
-                    self.loc[0] -= 1
-                elif self.direction == 2:
-                    self.loc[0] += 1
-                elif self.direction == 3:
-                    self.loc[1] -= 1
+                self.loc = [self.loc[0] + self.direction[0], self.loc[1] + self.direction[1]]
                 self.pixel = list(map(lambda x:  x * tile_size, self.loc))
                 self.is_moving = False
             else:
                 # direction에 따라 픽셀을 speed만큼 이동시킨 뒤 카운트 감소
-                if self.direction == 0:
-                    self.pixel[1] += self.speed
-                elif self.direction == 1:
-                    self.pixel[0] -= self.speed
-                elif self.direction == 2:
-                    self.pixel[0] += self.speed
-                elif self.direction == 3:
-                    self.pixel[1] -= self.speed
+
+                self.pixel[0] += self.direction[0] * self.speed
+                self.pixel[1] += self.direction[1] * self.speed
                 self.count -= 1
-            surf.blit(self.texture[self.direction * 3 + self.foot * 2], self.pixel)
+            surf.blit(self.get_texture(self.direction, self.foot), self.pixel)
         else:
-            surf.blit(self.texture[self.direction * 3 + 1], self.pixel)
+            surf.blit(self.get_texture(self.direction, 1), self.pixel)
         return
 
     def texture_test(self):
@@ -178,4 +172,4 @@ class character:
             for x in range(3):
                 texturenumb = y * 3 + x
                 rtnsurf.blit(self.texture[texturenumb], (x * 32, y * 32))
-        return rtnsurf 
+        return rtnsurf

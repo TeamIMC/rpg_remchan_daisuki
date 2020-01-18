@@ -4,7 +4,7 @@
 			"name": "miku",
 			"location": "0, 0",
 			"condition": "",
-			"move_routine": ""
+			"move_routine_cmd": "left;right;down;up"
 		}
 	],
 	"onLoad": "",
