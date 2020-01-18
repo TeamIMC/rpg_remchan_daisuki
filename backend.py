@@ -129,13 +129,13 @@ class character:
         if self.is_moving:
             return 1
         else:
+            self.direction = direction
             temploc = [self.loc[0] + direction[0], self.loc[1] + direction[1]]
             if temploc[0] > len(hitbox[0]) - 1 or temploc[1] > len(hitbox) - 1 or temploc[0] < 0 or temploc[1] < 0:
                 return 2
             elif hitbox[temploc[1]][temploc[0]]:
                 return 3
         #방향, 속도, 움직일 횟수, 발, 움직이는지 여부 바꾸기
-        self.direction = direction
         self.speed = tile_size / (fps * duration)
         self.count = fps * duration
         # 발 바꾸기
