@@ -129,6 +129,7 @@ class character:
         if self.is_moving:
             return 1
         else:
+            # 움직이지 못하는 곳으로 가려 했을때도 바라보는 방향은 바뀌도록 검사 전에 바꿈
             self.direction = direction
             temploc = [self.loc[0] + direction[0], self.loc[1] + direction[1]]
             if temploc[0] > len(hitbox[0]) - 1 or temploc[1] > len(hitbox) - 1 or temploc[0] < 0 or temploc[1] < 0:

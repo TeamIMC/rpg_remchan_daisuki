@@ -19,7 +19,7 @@ testchr = character("test")
 
 keypress = False
 key = None
-duration = 0.5
+duration = 1
 
 while True:
     hitbox = merge_hitbox((test.get_hitbox(), testchr.get_hitbox((len(test.hitbox[0]), len(test.hitbox)))))
@@ -32,9 +32,9 @@ while True:
                 key = event.key
                 direction = {K_w: (0, -1), K_a: (-1, 0), K_s: (0, 1), K_d: (1, 0)}[event.key]
             if event.mod & KMOD_SHIFT:
-                duration = 0.25
+                duration = 0.1
             else:
-                duration = 0.5
+                duration = 0.2
         elif event.type == pygame.KEYUP:
             if event.key == key:
                 keypress = False
