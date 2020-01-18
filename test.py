@@ -20,6 +20,7 @@ testchr = character("test")
 keypress = False
 key = None
 duration = 0.5
+
 while True:
     hitbox = merge_hitbox((test.get_hitbox(), testchr.get_hitbox((len(test.hitbox[0]), len(test.hitbox)))))
     for event in pygame.event.get():
@@ -39,7 +40,7 @@ while True:
                 keypress = False
     if keypress:
         if not testchr.is_moving:
-            testchr.add_move_queue(direction, hitbox, duration = duration, fps = fps)
+            testchr.add_move_queue(direction, hitbox, duration, fps)
 
     mapsurf = test.mapsurf.copy()
     testchr.run_queue(mapsurf)
