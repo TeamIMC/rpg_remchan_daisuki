@@ -1,0 +1,12 @@
+{
+	"NPC":[
+		{
+			"name": "miku",
+			"location": "0, 0",
+			"condition": "",
+			"move_routine": ""
+		}
+	],
+	"onLoad": "",
+	"event": ""
+}
