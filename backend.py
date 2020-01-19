@@ -50,6 +50,7 @@ class rpg_map:
     def __init__(self, name):
         ### 데이터 로딩 ###
         self.texture = get_texture(pygame.image.load(os.path.join("maps", name, "texture.png")).convert_alpha())
+        self.objectt = get_texture(pygame.image.load(os.path.join("maps", name, "object.png")).convert_alpha())
         # TODO: BMP 파싱 도무지 못해먹겠으니 알아서 구현할것. 임시로 텍스트 파싱으로 가져다둠
         self.floor = json.load(open(os.path.join("maps", name, "floor")))
         self.object = json.load(open(os.path.join("maps", name, "object")))
@@ -65,7 +66,7 @@ class rpg_map:
                 floornumb = int.from_bytes(bytearray.fromhex(self.floor[y][x][:2]), sys.byteorder)
                 objectnumb = int.from_bytes(bytearray.fromhex(self.object[y][x][:2]), sys.byteorder)
                 self.mapsurf.blit(self.texture[floornumb], (x * 32, y * 32))
-                self.mapsurf.blit(self.texture[objectnumb], (x * 32, y * 32))
+                self.mapsurf.blit(self.objectt[objectnumb], (x * 32, y * 32))
 
         ### 맵 충돌 포인트 생성 ###
         # 히트박스 사이즈에 맞는 빈 리스트 생성
