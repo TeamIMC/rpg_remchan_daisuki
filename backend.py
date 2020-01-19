@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import copy
+import random
 
 # TODO: 예외 클래스 따로 생성해둘것
 
@@ -21,9 +22,15 @@ def get_texture(image, tile_size = (32, 32), texture_size = (512, 512)):
     # 텍스쳐 파일 사이즈가 맞는지 확인
     if not image.get_size() == texture_size:
         raise Exception("Not a valid Texture File")
+    print("imw")
+    print(image.get_width())
+    print(image.get_height())
     # 이미지 크기 타일단위로 변환
     width = int(image.get_width() / tile_size[0])
     height = int(image.get_height() / tile_size[1])
+    print("wh")
+    print(width)
+    print(height)
     # 사이즈 타일단위로 잘라서 리턴
     rtnlist = []
     for x in range(width * height):
@@ -64,7 +71,8 @@ class rpg_map:
                 # 색상코드 앞 2자리 받아서 바이트로 변환후 int로 재변환
                 floornumb = int.from_bytes(bytearray.fromhex(self.floor[y][x][:2]), sys.byteorder)
                 objectnumb = int.from_bytes(bytearray.fromhex(self.object[y][x][:2]), sys.byteorder)
-                self.mapsurf.blit(self.texture[floornumb], (x * 32, y * 32))
+                floor_rr = pygame.transform.rotate(self.texture[floornumb], random.randrange(1,4) * 90)
+                self.mapsurf.blit(floor_rr, (x * 32, y * 32))
                 self.mapsurf.blit(self.texture[objectnumb], (x * 32, y * 32))
 
         ### 맵 충돌 포인트 생성 ###
