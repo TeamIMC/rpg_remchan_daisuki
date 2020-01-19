@@ -68,6 +68,7 @@ class rpg_map:
                 self.mapsurf.blit(self.texture[objectnumb], (x * 32, y * 32))
 
         ### 맵 충돌 포인트 생성 ###
+        # 히트박스 사이즈에 맞는 빈 리스트 생성
         self.hitbox = list(map(lambda x:  list(map(lambda x:  0, range(len(self.object[0])))), range(len(self.object))))
         for y in range(len(self.object)):
             for x in range(len(self.object[0])):
@@ -82,7 +83,7 @@ class character:
         self.texture = get_texture(pygame.image.load(os.path.join("characters", name + ".png")).convert_alpha(), texture_size = (96, 128))
         self.loc = [0, 0]
         self.pixel = [0, 0]
-        self.direction = 0
+        self.direction = [0, 0]
         self.foot = 2
         self.count = 0
         self.is_moving = False
@@ -120,8 +121,9 @@ class character:
             elif self.direction == 3:
                 hitbox[self.loc[1] - 1][self.loc[0]] = 1
         '''
+        if self.is_moving:
+            hitbox[self.loc[1] + self.direction[1]][self.loc[0] + self.direction[0]] = 1
         return hitbox
-
 
     def add_move_queue(self, direction, hitbox, duration = 1, fps = 60, tile_size = 32):
         # direction 0 = 아래 1 = 왼쪽 2 = 오른쪽 3 = 위쪽
