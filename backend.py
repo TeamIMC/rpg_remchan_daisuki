@@ -72,7 +72,7 @@ class rpg_map:
                 floornumb = int.from_bytes(bytearray.fromhex(self.floor[y][x][:2]), sys.byteorder)
                 objectnumb = int.from_bytes(bytearray.fromhex(self.object[y][x][:2]), sys.byteorder)
                 floor_rr = pygame.transform.rotate(self.texture[floornumb], random.randint(1,4) * 90)
-                self.mapsurf.blit(floor_rr, (x * 32, y * 32))
+                self.mapsurf.blit(self.texture[floornumb], (x * 32, y * 32))
                 self.mapsurf.blit(self.texture[objectnumb], (x * 32, y * 32))
 
         ### 맵 충돌 포인트 생성 ###
