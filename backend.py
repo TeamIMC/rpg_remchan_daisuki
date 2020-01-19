@@ -150,7 +150,6 @@ class character:
                 self.is_moving = False
             else:
                 # direction에 따라 픽셀을 speed만큼 이동시킨 뒤 카운트 감소
-                print(self.count, self.foot_count, self.foot)
                 if self.count <= self.foot_count:
                     self.foot_count -= self.count_orig / 4
                     if self.foot == 2:
