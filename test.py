@@ -32,9 +32,9 @@ while True:
                 key = event.key
                 direction = {K_w: (0, -1), K_a: (-1, 0), K_s: (0, 1), K_d: (1, 0)}[event.key]
             if event.mod & KMOD_SHIFT:
-                duration = 0.1
+                duration = 0.25
             else:
-                duration = 0.2
+                duration = 0.5
         elif event.type == pygame.KEYUP:
             if event.key == key:
                 keypress = False

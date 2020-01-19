@@ -84,8 +84,10 @@ class character:
         self.loc = [0, 0]
         self.pixel = [0, 0]
         self.direction = [0, 0]
-        self.foot = 2
         self.count = 0
+        self.count_orig = 0
+        self.foot = 0
+        self.foot_count = 0
         self.is_moving = False
 
     def get_texture(self, direction, foot):
@@ -110,17 +112,6 @@ class character:
         # https://stackoverflow.com/questions/10712002/create-an-empty-list-in-python-with-certain-size
         hitbox = list(map(lambda x:  list(map(lambda x:  0, range(size[0]))), range(size[1])))
         hitbox[self.loc[1]][self.loc[0]] = 2
-        '''
-        if self.is_moving:
-            if self.direction == 0:
-                hitbox[self.loc[1] + 1][self.loc[0]] = 1
-            elif self.direction == 1:
-                hitbox[self.loc[1]][self.loc[0] - 1] = 1
-            elif self.direction == 2:
-                hitbox[self.loc[1]][self.loc[0] + 1] = 1
-            elif self.direction == 3:
-                hitbox[self.loc[1] - 1][self.loc[0]] = 1
-        '''
         if self.is_moving:
             hitbox[self.loc[1] + self.direction[1]][self.loc[0] + self.direction[0]] = 1
         return hitbox
@@ -141,11 +132,9 @@ class character:
         #방향, 속도, 움직일 횟수, 발, 움직이는지 여부 바꾸기
         self.speed = tile_size / (fps * duration)
         self.count = fps * duration
-        # 발 바꾸기
-        if self.foot == 0:
-            self.foot = 2
-        else:
-            self.foot = 0
+        self.count_orig = self.count
+        self.foot = 0
+        self.foot_count = self.count - self.count / 4
         self.is_moving = True
         return 0
 
@@ -160,7 +149,13 @@ class character:
                 self.is_moving = False
             else:
                 # direction에 따라 픽셀을 speed만큼 이동시킨 뒤 카운트 감소
-
+                print(self.count, self.foot_count, self.foot)
+                if self.count <= self.foot_count:
+                    self.foot_count -= self.count_orig / 4
+                    if self.foot == 2:
+                        self.foot = 1
+                    else:
+                        self.foot += 1
                 self.pixel[0] += self.direction[0] * self.speed
                 self.pixel[1] += self.direction[1] * self.speed
                 self.count -= 1
