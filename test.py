@@ -3,7 +3,7 @@
 
 # 경고: 여기에 쓰인 코드는 예시용으로 작성된 코드이며, 실제 게임에 들어갈때는 코드가 달라질 수 있음.
 import pygame
-from backend import *
+from engine import *
 from pygame.locals import *
 from os.path import abspath, dirname
 
